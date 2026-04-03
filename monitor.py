@@ -2,7 +2,7 @@ import requests
 
 # Configuration
 URL = "https://tgftp.nws.noaa.gov/data/forecasts/recreation/reno.txt"
-NTFY_TOPIC = "rileys-tahoe-surf-alert-841"
+NTFY_TOPIC = "Rileys-tahoe-surf-alert-841"
 KEYWORD = "1 foot"
 
 def check_waves():
