@@ -1,8 +1,8 @@
 name: Check Tahoe Waves
 on:
   schedule:
-    - cron: '0 * * * *' # Runs every hour
-  workflow_dispatch: # Allows you to run it manually
+    - cron: '0 * * * *'
+  workflow_dispatch:
 
 jobs:
   build:
