@@ -10,14 +10,16 @@ def check_waves():
         response = requests.get(URL)
         text = response.text.lower()
         
-        if KEYWORD in text:
-            # Send the push notification
+        # This will trigger for '4 feet', '4 foot', or '4 ft'
+        if "4 feet" in text or "4 foot" in text or "4 ft" in text:
+            msg = "High waves (4ft+) forecasted for Tahoe!"
             requests.post(f"https://ntfy.sh/{NTFY_TOPIC}", 
-                          data=f"Alert: Wave heights of {KEYWORD} forecasted for Tahoe!",
+                          data=msg,
                           headers={"Title": "Tahoe Surf Alert", "Priority": "high"})
             print("Alert sent!")
         else:
-            print("Conditions not met.")
+            # This helps you see what's happening in the logs
+            print(f"Conditions not met. Current text: {text[:100]}...") 
             
     except Exception as e:
         print(f"Error: {e}")
