@@ -18,8 +18,8 @@ def check_waves():
             
         text = tahoe_section.group(0)
 
-        # 2. Look for wave heights (1-6 ft for testing)
-        match = re.search(r"wave heights (less than 1 foot|[1-6]\s*(feet|foot|ft))", text)
+        # 2. Look for wave heights (4-9 ft for testing)
+        match = re.search(r"wave heights (([4-9]|\d{2,})\s*(feet|foot|ft))", text)
         
         if match:
             wave_height = match.group(1)
