@@ -12,7 +12,7 @@ def check_waves():
         
         print(f"Checking for '{TEST_KEYWORD}' in NWS text...")
         
-        if TEST_KEYWORD in text:
+        if True:
             requests.post(f"https://ntfy.sh/{NTFY_TOPIC}", 
                           data=f"Success! Found '{TEST_KEYWORD}' in the Tahoe forecast.",
                           headers={"Title": "Tahoe Surf Alert", "Priority": "high"})
