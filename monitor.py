@@ -4,36 +4,49 @@ import re
 URL = "https://tgftp.nws.noaa.gov/data/forecasts/recreation/reno.txt"
 NTFY_TOPIC = "Rileys-tahoe-surf-alert-841"
 
-def get_value(pattern, text):
-    match = re.search(pattern, text)
-    return match.group(1).strip() if match else "N/A"
-
 def check_waves():
     try:
         response = requests.get(URL)
-        text = response.text.lower()
+        full_text = response.text.lower()
         
-        # Look for 4, 5, or 6 feet/ft
-        match = re.search(r"([1-6]\s*(feet|foot|ft))", text)
+        # 1. Isolate the Lake Tahoe specific section to avoid global warnings
+        # This looks for text between 'lake tahoe at lake level' and the next '$$' separator
+        tahoe_section = re.search(r"lake tahoe at lake level-.*?\$\$", full_text, re.DOTALL)
+        if not tahoe_section:
+            print("Could not find Lake Tahoe section.")
+            return
+            
+        text = tahoe_section.group(0)
+
+        # 2. Look for wave heights (1-6 ft for testing)
+        match = re.search(r"wave heights (less than 1 foot|[1-6]\s*(feet|foot|ft))", text)
         
         if match:
             wave_height = match.group(1)
-            # Extracting other conditions using simple regex
-            wind = get_value(r"winds?\s*(.*?)\.", text)
-            air = get_value(r"air temperature\s*(.*?)\.", text)
-            water = get_value(r"water temperature\s*(.*?)\.", text)
+            
+            # 3. Targeted extraction for Tahoe-specific conditions
+            # Finds winds specifically in the '.TONIGHT' or '.SATURDAY' lines
+            wind_match = re.search(r"winds?\s+(.*?)\.", text)
+            wind = wind_match.group(1) if wind_match else "Light"
+            
+            # Finds highs/lows
+            temp_match = re.search(r"(highs|lows)\s+(\d+\s+to\s+\d+)", text)
+            air_temp = temp_match.group(2) if temp_match else "N/A"
+            
+            # Finds water temp from the specific 'Mid Lake Buoys' line
+            water_match = re.search(r"buoys\.+(\d+\.?\d*)", text)
+            water_temp = water_match.group(1) if water_match else "N/A"
 
             message = (
-                f"Tahoe is ON! 🏄\n"
-                f"Waves: {wave_height}\n"
+                f"🏄 TAHOE IS ON!\n"
+                f"Swell: {wave_height}\n"
                 f"Wind: {wind}\n"
-                f"Air: {air} | Water: {water}\n"
-                f"Get after it!"
+                f"Air: {air_temp}° | Water: {water_temp}°"
             )
             
             requests.post(f"https://ntfy.sh/{NTFY_TOPIC}", 
                           data=message,
-                          headers={"Title": "Swell Alert: Tahoe", "Priority": "high"})
+                          headers={"Title": "Swell Alert: Tahoe", "Priority": "high", "Tags": "surf_board,ocean"})
             print("Surf alert sent!")
         else:
             print("Flat spells continue...")
