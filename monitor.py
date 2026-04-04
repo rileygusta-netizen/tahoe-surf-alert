@@ -26,4 +26,3 @@ def check_waves():
 if __name__ == "__main__":
     check_waves
     ()
-requests.post(f"https://ntfy.sh/{NTFY_TOPIC}", data="Test from GitHub!")
