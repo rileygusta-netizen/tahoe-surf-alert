@@ -11,7 +11,7 @@ def check_waves():
         text = response.text.lower()
         
         # This will now trigger for '1 foot' as seen in today's forecast
-        if "1 foot" in text or "2 feet" in text:
+        if "1 foot" in text:
             msg = "Waves are forecasted for Tahoe!"
             requests.post(f"https://ntfy.sh/{NTFY_TOPIC}", 
                           data=msg,
