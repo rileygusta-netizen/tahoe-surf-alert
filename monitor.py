@@ -3,7 +3,7 @@ import requests
 # Configuration
 URL = "https://tgftp.nws.noaa.gov/data/forecasts/recreation/reno.txt"
 NTFY_TOPIC = "Rileys-tahoe-surf-alert-841"
-KEYWORD = "foot"
+KEYWORD = "1 foot"
 
 def check_waves():
     try:
@@ -11,7 +11,7 @@ def check_waves():
         text = response.text.lower()
         
         # This will trigger for '4 feet', '4 foot', or '4 ft'
-        if "4 feet" in text or "4 foot" in text or "4 ft" in text:
+        if "4 feet" in text or "1 foot" in text or "4 ft" in text:
             msg = "High waves (4ft+) forecasted for Tahoe!"
             requests.post(f"https://ntfy.sh/{NTFY_TOPIC}", 
                           data=msg,
