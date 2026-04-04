@@ -41,8 +41,8 @@ def check_waves():
                 f"🏄 TAHOE IS ON!\n"
                 f"Swell: {wave_height}\n"
                 f"Wind: {wind}\n"
-                f"Air: {air_temp}°"
-                f"Water: {water_temp}°"
+                f"Air: {air_temp}°\n"
+                f"Water: {water_temp}°\n"
                 f"You'll be fine! 🤙🥶🤙"
             )
             
