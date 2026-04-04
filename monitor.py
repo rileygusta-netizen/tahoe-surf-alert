@@ -46,7 +46,7 @@ def check_waves():
             
             requests.post(f"https://ntfy.sh/{NTFY_TOPIC}", 
                           data=message,
-                          headers={"Title": "Swell Alert: Tahoe", "Priority": "high", "Tags": "surf_board,ocean"})
+                          headers={"Title": "Swell Alert: Tahoe", "Priority": "high"})
             print("Surf alert sent!")
         else:
             print("Flat spells continue...")
