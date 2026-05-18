@@ -18,32 +18,45 @@ def check_waves():
             
         text = tahoe_section.group(0)
 
-        # 2. Look for wave heights (4-9 ft for testing)
-        match = re.search(r"wave heights (([4-9]|\d{2,})\s*(feet|foot|ft))", text)
+                # 2. Look for any mention of a wave height range or single digit hitting 4ft+
+        # This will safely capture "1 to 5 feet", "4 feet", or "5 to 8 ft"
+        match = re.search(r"wave heights\s+([^.\n]*([4-9]|\d{2,})\s*(feet|foot|ft))", text)
         
         if match:
-            wave_height = match.group(1)
+            # Grabs the whole phrase (e.g., "1 to 5 feet")
+            wave_height = match.group(1).strip()
             
             # 3. Targeted extraction for Tahoe-specific conditions
-            # Finds winds specifically in the '.TONIGHT' or '.SATURDAY' lines
-            wind_match = re.search(r"winds?\s+(.*?)\.", text)
-            wind = wind_match.group(1) if wind_match else "Light"
+            wind_match = re.search(r"winds?\s+([^.\n]+)", text)
+            wind = wind_match.group(1).strip() if wind_match else "Light"
             
-            # Finds highs/lows
+            # Grabs the temperature range from TONIGHT or MONDAY lines
             temp_match = re.search(r"(highs|lows)\s+(\d+\s+to\s+\d+)", text)
-            air_temp = temp_match.group(2) if temp_match else "N/A"
+            air_temp = temp_match.group(2).strip() if temp_match else "N/A"
             
-            # Finds water temp from the specific 'Mid Lake Buoys' line
             water_match = re.search(r"buoys\.+(\d+\.?\d*)", text)
-            water_temp = water_match.group(1) if water_match else "N/A"
+            water_temp = water_match.group(1).strip() if water_match else "N/A"
 
             message = (
                 f"🏄 TAHOE IS ON!\n"
                 f"Swell: {wave_height}\n"
                 f"Wind: {wind}\n"
-                f"Air: {air_temp}°\n"
-                f"Water: {water_temp}°\n"
-                f"You'll be fine! 🤙🥶🤙"
+                f"Air: {air_temp}° | Water: {water_temp}°\n"
+                f"You'll be fine! 🤙"
+            )
+            
+            # Sending with proper ntfy emoji tags metadata
+            requests.post(
+                f"https://ntfy.sh/{NTFY_TOPIC}", 
+                data=message,
+                headers={
+                    "Title": "Swell Alert: Tahoe", 
+                    "Priority": "high",
+                    "Tags": "surf_board,wave"
+                }
+            )
+            print("Surf alert sent!")
+
             )
             
             requests.post(f"https://ntfy.sh/{NTFY_TOPIC}", 
