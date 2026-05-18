@@ -20,7 +20,8 @@ def check_waves():
         # 2. Look for any mention of a wave height range or single digit hitting 4ft+
         match = re.search(r"wave heights\s+([^.\n]*([4-9]|\d{2,})\s*(feet|foot|ft))", text)
         
-        if match:
+                match = re.search(r"wave heights\s+([^.\n]*?(?:[4-9]|\d{2,})\s*(?:feet|foot|ft)[^.\n]*)", text)
+        
             wave_height = match.group(1).strip()
             
             # 3. Targeted extraction for Tahoe-specific conditions
